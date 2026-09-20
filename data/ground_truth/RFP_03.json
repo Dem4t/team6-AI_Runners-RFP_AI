@@ -1,0 +1,22 @@
+{
+  "document_name": "City of Medicine Hat - LMS tender.pdf",
+  "extracted_fields": {
+    "submission_deadline": "May 28, 2026 2:00 PM local time",
+    "deadline_for_questions": "May 21, 2026 4:00 PM local time",
+    "rfp_contact": "Joanne Bruneau-Carter (joabru@medicinehat.ca)",
+    "submission_method": "Online bidding system portal at https://medicinehat.bidsandtenders.ca/Module",
+    "contract_term": "Five (5) years, with an option to extend annually for an additional two (2) years.",
+    "scope_of_deliverables": "Provision, implementation, configuration, training, and support for a modern Corporate Learning Management System (LMS).",
+    "mandatory_submission_requirements": "Submission Form (Appendix B) completed and signed, Pricing (Appendix C / Proposal Form).",
+    "mandatory_technical_requirements": "Must meet Functional Requirements, Scope of Work, and technical/security criteria outlined in Appendix E and Appendix D.",
+    "evaluation_criteria": "Stage 1: Technical Capability (50 pts), Vendor Experience & References (15 pts), Implementation & Support (20 pts), Pricing (15 pts). Stage 2 (Demo): Product Demonstration (30 pts). Total: 130 points.",
+    "minimum_score_threshold": "Minimum technical score of 35 out of 50 points in Stage 1 to advance.",
+    "pricing_requirements": "CAD, exclusive of GST, itemized by one-time implementation costs and annual recurring subscription/licensing costs.",
+    "minimum_insurance_requirements": "Commercial General Liability: $2,000,000 per occurrence; Professional Errors and Omissions: $1,000,000 per claim ($2,000,000 aggregate); Cyber Liability: $2,000,000 per occurrence; Automobile Liability: $2,000,000 inclusive.",
+    "vendor_experience_qualifications": "Experience providing LMS services over the last 5 years, including municipal/government implementations.",
+    "number_of_references_required": "Minimum of three (3) client references similar in scope & size over the last 5 years.",
+    "data_security_privacy_requirements": "Compliance with PIPA, SOC2/ISO, Azure AD SSO, MFA, encryption at rest and in transit, and Cybersecurity Vendor Assessment (CVA).",
+    "data_hosting_residency_requirements": "Vendor server preferred within Canada or option for cloud storage in Canada.",
+    "vendor_demonstration_requirement": "Yes, Stage 2 Product Demonstration for top-ranked proponents meeting technical threshold (scored out of 30 points)."
+  }
+}

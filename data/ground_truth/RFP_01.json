@@ -1,0 +1,22 @@
+{
+  "document_name": "AB-2025-02456-RFP #25-004ERP Requirements Analysis and Readiness Review_Final (1).pdf",
+  "extracted_fields": {
+    "submission_deadline": "May 14, 2025, 2:00 PM MST",
+    "deadline_for_questions": "April 17, 2025, 2 PM MST",
+    "rfp_contact": "Indra Ghosh, Supervisor of Purchasing and Treasury (PublicBids@rockyview.ca)",
+    "submission_method": "Electronic submission via email to PublicBids@rockyview.ca",
+    "contract_term": "From date of official acceptance until December 31, 2025, with option to renew for up to 1 additional year up to a total period not exceeding 3 years.",
+    "scope_of_deliverables": "ERP Requirements Analysis and Readiness Review, development of RFP scope of work document, and advisory services for the ERP evaluation and selection process.",
+    "mandatory_submission_requirements": "Completion and submission of signed Submission Form (Appendix B), Pricing Schedule (Section F/Appendix C), and Mandatory Evaluation Table (Section B.3).",
+    "mandatory_technical_requirements": "Must meet requirements outlined in Mandatory Evaluation Table (Understanding of Scope, Proposed Methodology, Schedule, Team Credentials, Previous Similar Work, Budgetary Control within 10% variance, Insurance and References).",
+    "evaluation_criteria": "Proponent's Experience and Qualifications (10%), Service Team Qualifications and Experience (25%), Client References and Past Experience (10%), Work Plan, Methodology, and Quality Assurance (30%), Pricing (25%). Total: 100 points.",
+    "minimum_score_threshold": "N/A",
+    "pricing_requirements": "Task-Fee Schedule (Unit price and Lump-sum price structure) in CAD, inclusive of all labour, equipment, materials, travel, and overhead (excluding applicable sales taxes).",
+    "minimum_insurance_requirements": "Required Insurance Certificate (specific dollar limits not explicitly detailed in body text; standard vendor agreement applies).",
+    "vendor_experience_qualifications": "Project Manager: minimum 5 years experience on ERP projects and led at least 2 ERP projects in last 7 years. Team members: minimum 3 years experience on ERP projects in last 7 years.",
+    "number_of_references_required": "Minimum of three (3) client references (preferably public sector/municipal within last 7 years).",
+    "data_security_privacy_requirements": "Compliance with data governance, security protocols, role-based access controls, encryption, audit trails, and data protection regulations.",
+    "data_hosting_residency_requirements": "Assessment of data residency requirements and compliance with relevant regulations for cloud-stored data.",
+    "vendor_demonstration_requirement": "Yes, shortlisted proponents may be called for a 2nd level interview and product presentation/demonstration."
+  }
+}

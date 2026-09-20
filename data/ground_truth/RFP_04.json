@@ -1,0 +1,22 @@
+{
+  "document_name": "EN_-_ERP_RFP_24.25.04.pdf",
+  "extracted_fields": {
+    "submission_deadline": "April 14, 2025 11:59:59 PM PST",
+    "deadline_for_questions": "March 17, 2025 11:59:59 PM PST",
+    "rfp_contact": "Jeremy Elliott (procurement@cowichantribes.com)",
+    "submission_method": "Directly through the BCBid platform",
+    "contract_term": "Implementation phase + 5-year licensing and support term with options to extend.",
+    "scope_of_deliverables": "Cloud-based ERP system(s) covering finance, procurement, human resources, payroll, and asset management, plus data conversion and implementation services.",
+    "mandatory_submission_requirements": "Signed Submission Form (Appendix C PDF), Narrative Response (PDF), Pricing Sheet (Excel), Requirements Sheet (Excel).",
+    "mandatory_technical_requirements": "Support for Canadian taxes and payroll, experience implementing for First Nations in Canada, hosted/data stored in Canada, 5+ years implementation experience, cloud-based, SOC2 Type 2 compliant.",
+    "evaluation_criteria": "Functional Fit (35 pts), Narrative Proposal (20 pts), Pricing (15 pts), Vendor Demonstration (30 pts). Total: 100 points.",
+    "minimum_score_threshold": "Functional Fit: 28 pts (80%); Narrative Proposal: 14 pts (70%); Pricing: 10.5 pts (70%); Vendor Demonstration: 21 pts (70%).",
+    "pricing_requirements": "All-inclusive 5-year pricing schedule in CAD submitted via Excel workbook, covering implementation, licensing, support, and resource rates.",
+    "minimum_insurance_requirements": "Valid Worker's Compensation Board clearance certificate required.",
+    "vendor_experience_qualifications": "Implementation vendor(s) must demonstrate at least five (5) years experience implementing Finance, HR, Payroll, and Asset Management solutions, and experience with First Nations in Canada.",
+    "number_of_references_required": "At least two (2) and at most five (5) references for implementations in Canada (preference for First Nation clients).",
+    "data_security_privacy_requirements": "SOC2 Type 2 compliant or equivalent; robust platform and operational security.",
+    "data_hosting_residency_requirements": "Must be hosted in Canada and store all data within Canada.",
+    "vendor_demonstration_requirement": "Yes, Stage V Vendor Demonstrations according to a provided script (weighted at 30 points)."
+  }
+}
