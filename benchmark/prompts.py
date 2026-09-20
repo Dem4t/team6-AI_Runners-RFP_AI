@@ -1,9 +1,8 @@
 import json
-from typing import List, Dict, Any
 from schema import FIELDS
 
 # =========================================================
-# FIELD-SPECIFIC EXTRACTION INSTRUCTIONS
+# 1. FIELD-SPECIFIC EXTRACTION INSTRUCTIONS
 # =========================================================
 
 FIELD_INSTRUCTIONS = {
@@ -26,7 +25,11 @@ FIELD_INSTRUCTIONS = {
     "vendor_demonstration_requirement": "Extract whether a demonstration/presentation is required or requested, and scoring details. Output as a flat string."
 }
 
-def _get_json_template() -> str:
+# =========================================================
+# 2. GLOBAL PRE-COMPUTATION (CPU OPTIMIZATION)
+# =========================================================
+def _generate_json_template() -> str:
+    """Builds the strict JSON template once at startup."""
     template = "{\n"
     for i, field in enumerate(FIELDS):
         is_last = (i == len(FIELDS) - 1)
@@ -34,91 +37,67 @@ def _get_json_template() -> str:
     template += "}"
     return template
 
-def create_chunk_prompt(chunk_text: str) -> str:
-    field_instructions = "\n".join(
+def _generate_field_instructions() -> str:
+    """Builds the numbered extraction rules once at startup."""
+    return "\n".join(
         f'{index}. "{field}": {FIELD_INSTRUCTIONS.get(field, "Extract related information.")}'
         for index, field in enumerate(FIELDS, start=1)
     )
-    json_template = _get_json_template()
 
-    return f"""
-You are extracting structured information from an RFP document.
-Your task is to extract information from ONLY the RFP text provided below.
+PRECOMPILED_JSON_TEMPLATE = _generate_json_template()
+PRECOMPILED_FIELD_INSTRUCTIONS = _generate_field_instructions()
 
-IMPORTANT RULES:
-1. Extract information only when it is supported by the provided text.
-2. If a field is not present in this chunk, return null for that field.
-3. Preserve important details such as dates, times, emails, URLs, numbers, percentages, and dollar amounts.
-4. Output ONLY raw, valid JSON. Start immediately with '{{' and end with '}}'.
-5. Do NOT use Markdown code fences (```json).
+# =========================================================
+# 3. PROMPT GENERATORS (LLM OPTIMIZATION)
+# =========================================================
+
+def create_extraction_prompt(rfp_text: str) -> str:
+    """
+    Creates a strict, zero-shot extraction prompt tailored for Qwen2.5.
+    Replaces the legacy chunking architecture for single-pass processing.
+    """
+    return f"""You are a precise data extraction system parsing Request for Proposal (RFP) documents.
+Your task is to extract information from ONLY the provided RFP text and output it as a strict JSON object.
+
+CRITICAL INSTRUCTIONS:
+1. Extract information only when explicitly supported by the text.
+2. If a field is not present or cannot be determined, strictly use null (do not use "N/A" or "None").
+3. Preserve exact details: dates, times, emails, URLs, numbers, percentages, and dollar amounts.
+4. Escape any internal double quotes within your extracted text (e.g., \\"example\\").
+5. OUTPUT FORMAT: Return ONLY valid, raw JSON. Do not include introductory text, conversational filler, or Markdown code fences (```json).
 
 FIELDS TO EXTRACT:
-{field_instructions}
+{PRECOMPILED_FIELD_INSTRUCTIONS}
 
-RFP TEXT:
-<rfp_chunk>
-{chunk_text}
-</rfp_chunk>
+RFP TEXT TO PROCESS:
+<RFP_DOCUMENT>
+{rfp_text}
+</RFP_DOCUMENT>
 
-Return exactly this JSON structure:
-{json_template}
-""".strip()
-
-def create_final_prompt(extractions: List[Dict[str, Any]]) -> str:
-    combined = "\n\n".join(
-        f"<extraction_chunk index=\"{i + 1}\">\n"
-        f"{json.dumps(result, ensure_ascii=False, indent=2)}\n"
-        f"</extraction_chunk>"
-        for i, result in enumerate(extractions)
-    )
-
-    field_instructions = "\n".join(
-        f'{index}. "{field}": {FIELD_INSTRUCTIONS.get(field, "Extract related information.")}'
-        for index, field in enumerate(FIELDS, start=1)
-    )
-    json_template = _get_json_template()
-
-    return f"""
-You are consolidating structured information extracted from an RFP.
-You will receive multiple extraction results from different chunks of the SAME RFP document.
-Your task is to create ONE final JSON object containing the most accurate value for each of the {len(FIELDS)} required fields.
-
-IMPORTANT RULES:
-1. Use ONLY information contained in the extraction results below.
-2. Combine information from different chunks when they refer to the same requirement.
-3. Preserve exact details whenever available (dates, emails, URLs, dollar amounts).
-4. If a field is genuinely not supported by any extraction results, return null.
-5. Output ONLY raw, valid JSON. Start immediately with '{{' and end with '}}'.
-6. Do NOT use Markdown code fences (```json).
-
-FIELDS TO CONSOLIDATE:
-{field_instructions}
-
-EXTRACTION RESULTS:
-{combined}
-
-Return exactly this JSON structure:
-{json_template}
+Return exactly this JSON structure, replacing null with your extracted strings where applicable:
+{PRECOMPILED_JSON_TEMPLATE}
 """.strip()
 
 def create_json_repair_prompt(raw_response: str) -> str:
-    json_template = _get_json_template()
-    return f"""
-You are a JSON repair assistant.
-The following model response was supposed to contain extracted RFP fields, but it is not valid JSON.
-Convert it into valid JSON.
+    """
+    Acts as a fail-safe to format malformed LLM outputs into valid JSON,
+    saving the benchmark run from crashing due to syntax errors.
+    """
+    return f"""You are a JSON repair microservice.
+The following text contains data that was supposed to be a strict JSON object, but it contains formatting errors.
+Your ONLY job is to output the corrected, strictly valid JSON object.
 
-IMPORTANT RULES:
-1. Preserve the information from the original response exactly as provided.
-2. Fix invalid JSON syntax (missing commas, unescaped quotes).
-3. If a required field is missing, output null for that field.
-4. Output ONLY raw, valid JSON. Start immediately with '{{' and end with '}}'.
+CRITICAL INSTRUCTIONS:
+1. Preserve all extracted information exactly as provided.
+2. Fix invalid JSON syntax (add missing commas, escape unescaped double quotes, fix trailing commas).
+3. If a required field is missing from the input, set its value to null.
+4. OUTPUT FORMAT: Return ONLY valid, raw JSON. Do not include introductory text, explanations, or Markdown code fences (```json).
 
-ORIGINAL INVALID RESPONSE:
-<invalid_response>
+INVALID INPUT DATA:
+<INVALID_JSON>
 {raw_response}
-</invalid_response>
+</INVALID_JSON>
 
-Return exactly this JSON structure:
-{json_template}
+You must map the repaired data precisely to this schema:
+{PRECOMPILED_JSON_TEMPLATE}
 """.strip()
