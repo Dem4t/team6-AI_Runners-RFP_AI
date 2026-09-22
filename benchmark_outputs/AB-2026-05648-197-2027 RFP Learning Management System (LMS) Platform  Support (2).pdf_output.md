@@ -9,62 +9,62 @@ September 2, 2026 before 2:00:00 PM MT
 
 ---
 ### rfp_contact
-Purchasing Department, Olds College, 4500 - 50 Street Olds, AB T4H 1R6, submissions@oldscollege.ca, purchasing@oldscollege.ca
+Olds College Purchasing Department, 4500 - 50 Street, Olds, AB T4H 1R6, submissions@oldscollege.ca
 
 ---
 ### submission_method
-Electronic copy by email to submissions@oldscollege.ca
+Electronic copy by email to submissions@oldscollege.ca; must be clearly marked with the Proponent's name and address, the Proposal name and number and the Closing Date and Time. Submissions will NOT be accepted by facsimile transmission or in-person hard copy submissions.
 
 ---
 ### contract_term
-Five (5) years starting February 1st, 2027, with opportunity to renew for two (2) separate three (3) years renewals, for a total maximum of eleven (11) years
+Five (5) years starting February 1, 2027, with an option to renew for two (2) separate three (3) years renewals, for a maximum of eleven (11) years.
 
 ---
 ### scope_of_deliverables
-Learning Management System (LMS) Platform & Support, either through enhancement of third-party support for existing Moodle LMS or via a new LMS system, including development and management of learning content, assessments and grading, engagement and communication tools, artificial intelligence tools, support for multiple delivery modalities, academic integrity tools, accessibility compliance, mobile learning, integrations with existing systems (Ellucian Banner), data migration, cloud-based system, data analytics, and customer support
+Provision of Learning Management System (LMS) Platform & Support, either through enhancement of third-party support for existing Moodle LMS or via a new LMS system, to support student learning, instructor support, and institutional expansion into distance learning markets.
 
 ---
 ### mandatory_submission_requirements
-Proposal Certification Document (Section C Item 9) must be completed in full and signed by the Proponent, explicit acceptance of all contractual terms and conditions in the attached Service Agreement, comprehensive project pricing for all goods and services, company history and experience, organizational structure, staff and resource experience, proposed solution and approach, references (three references required), and compliance with all terms and conditions contained in the RFP
+Proposal Certification Document (Section C), Company Experience, Staff/Resources Experience, Proposed Project Solution and Approach, Pricing, References (Item 8.6), and explicit acceptance of Service Agreement Terms and Conditions.
 
 ---
 ### mandatory_technical_requirements
-System must meet WCAG accessibility standards, support mobile learning, integrate with Ellucian Banner and other external applications, support SAML based Single Sign-On (SSO) integration, provide local Multi-Factor Authentication (MFA) support or dependent on SSO integration, maintain data security standards safeguarding sensitive learning materials and learner information, adhere to Province of Alberta information privacy standards (POPA), provide HECVAT cybersecurity & privacy assessment, support cloud-based platform with preference for Canadian host location, provide robust data analytics, and support automated course enrolment and permission provisioning
+Enhancement of Moodle LMS or new LMS; integration with Ellucian Banner (SIS); cloud-based platform with preference for Canadian host; WCAG accessibility; SAML-based SSO; HECVAT cybersecurity & privacy assessment; support for AI tools; data migration capabilities; and provision of three references.
 
 ---
 ### evaluation_criteria
-A. Company Experience (15 points), B. Staff/Resource Experience (5 points), C. Proposed Solution and Approach (40 points), D. Pricing (40 points) including Total Cost of Proposal, E. Reference Checks and Interview (Outcome of reference checks - satisfactory yes/no), Total Points Available 100
+A. Company Experience (15 points), B. Staff/Resource Experience (5 points), C. Proposed Solution and Approach (40 points), D. Pricing (40 points), E. Reference Checks and Interview (Pass/Fail). Total Points Available: 100.
 
 ---
 ### minimum_score_threshold
-*[لم يتم العثور على بيانات]*
+Proposals not clearly meeting mandatory requirements in section 7.1 will be considered non-compliant and will not be evaluated.
 
 ---
 ### pricing_requirements
-Pricing must be submitted in Canadian dollars, prices must remain fixed and applicable to all goods and services throughout the entire term of the 5 year agreement, pricing must include implementation costs (one-time), ongoing LMS licensing and/or support costs (annual software subscription), and GST 5%, with separate pricing for individual modules/options
+Pricing in Canadian dollars; prices must remain fixed and applicable to all goods and services throughout the entire 5-year agreement; includes one-time implementation/enhancement costs and ongoing annual software subscription/support costs for modules 1, 2, 3, 4, and 5; GST 5% applies.
 
 ---
 ### minimum_insurance_requirements
-Comprehensive General Liability insurance in an amount of not less than two million dollars ($2,000,000) inclusive per occurrence against third party claims for bodily injury, personal injury, and property damage, and Insurance on property of others on an "all risks" basis including theft
+Comprehensive General Liability insurance of not less than two million dollars ($2,000,000) inclusive per occurrence; Insurance on property of others on an 'all risks' basis; and a 'Letter of Clearance' from the Workers' Compensation Board.
 
 ---
 ### vendor_experience_qualifications
-Company history including length of time in business and number of years providing goods and services requested, experience in providing LMS systems and support or support for existing Moodle LMS, experience working with post-secondary institutions previously including institutions that utilize Ellucian Banner, and staff and resource experience and qualifications
+Experience providing LMS systems and support; experience supporting existing Moodle LMS; and experience working with post-secondary institutions, including those using Ellucian Banner.
 
 ---
 ### number_of_references_required
-Three references required where the company has provided goods and services similar to those outlined in the RFP, including name and title, name of company, phone number and email address, types of goods and services provided, and duration and value of agreement
+Three references similar to those outlined in the RFP, including name and title, company name, contact info, types of goods/services, and duration/value of agreement. References must be satisfactory for compliance.
 
 ---
 ### data_security_privacy_requirements
-Maintain data security standards to safeguard sensitive learning materials and learner information, safeguards against data breaches, adhere to Province of Alberta information privacy standards (POPA), provide HECVAT cybersecurity & privacy assessment, comply with POPA and ATIA privacy and disclosure provisions, keep all sensitive information strictly confidential, and promptly report any breach or occurrence that is or has been harmful to any person or property
+Compliance with POPA and ATIA; HECVAT cybersecurity & privacy assessment; SAML based Single Sign-On (SSO) integration; Multi-Factor Authentication (MFA) support; and adherence to information privacy standards.
 
 ---
 ### data_hosting_residency_requirements
-Preference will be given to a Canadian host location for the cloud-based LMS platform
+Preference will be given to a Canadian host location for the cloud-based LMS platform.
 
 ---
 ### vendor_demonstration_requirement
-Olds College reserves the right to request presentations relating to a Proposal from short-listed Proponents as may be required, and RFP Evaluations & product demos are scheduled for September 10 - November 15, 2026
+Vendor Interviews and product demos scheduled for September 10 - November 15, 2026 (or TBD).
 
 ---

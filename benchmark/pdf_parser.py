@@ -24,7 +24,7 @@ def extract_text(pdf_path: Path) -> str:
         pages = []
         for i, page in enumerate(reader.pages):
             try:
-                text = page.extract_text()
+                text = page.extract_text(extraction_mode="layout")
                 if text and text.strip():
                     pages.append(text.strip())
             except Exception as page_err:
@@ -32,7 +32,7 @@ def extract_text(pdf_path: Path) -> str:
                 continue
 
         full_text = "\n\n".join(pages)
-        
+
         # Warn if the document yielded no text (likely a scanned image)
         if not full_text.strip():
             logger.warning(f"No text extracted from '{pdf_path.name}'. It may be a scanned image.")

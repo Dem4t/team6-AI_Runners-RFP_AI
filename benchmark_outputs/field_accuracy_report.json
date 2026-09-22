@@ -1,0 +1,150 @@
+{
+    "submission_deadline": {
+        "correct": 5,
+        "total": 5,
+        "accuracy": 100.0,
+        "failures": []
+    },
+    "deadline_for_questions": {
+        "correct": 5,
+        "total": 5,
+        "accuracy": 100.0,
+        "failures": []
+    },
+    "rfp_contact": {
+        "correct": 4,
+        "total": 5,
+        "accuracy": 80.0,
+        "failures": [
+            {
+                "rfp_name": "AB-2026-05648-197-2027 RFP Learning Management System (LMS) Platform  Support (2).pdf",
+                "expected": "Purchasing Department (purchasing@oldscollege.ca)",
+                "predicted": "Olds College Purchasing Department, 4500 - 50 Street, Olds, AB T4H 1R6, submissions@oldscollege.ca"
+            }
+        ]
+    },
+    "submission_method": {
+        "correct": 4,
+        "total": 5,
+        "accuracy": 80.0,
+        "failures": [
+            {
+                "rfp_name": "RFP CP-730126 Generative AI RFP (4).pdf",
+                "expected": "Online Bonfire Portal at https://usask.bonfirehub.ca",
+                "predicted": "Online Bonfire Portal at https://usask.bonfirehub.ca; file formats listed in Requested Information; maximum upload file size 1000 MB; Java/JavaScript must be enabled; cookies must be enabled."
+            }
+        ]
+    },
+    "contract_term": {
+        "correct": 5,
+        "total": 5,
+        "accuracy": 100.0,
+        "failures": []
+    },
+    "scope_of_deliverables": {
+        "correct": 5,
+        "total": 5,
+        "accuracy": 100.0,
+        "failures": []
+    },
+    "mandatory_submission_requirements": {
+        "correct": 4,
+        "total": 5,
+        "accuracy": 80.0,
+        "failures": [
+            {
+                "rfp_name": "AB-2026-05648-197-2027 RFP Learning Management System (LMS) Platform  Support (2).pdf",
+                "expected": "Completion and signing of Section C Item 9 'Proposal Certification Document'.",
+                "predicted": "Proposal Certification Document (Section C), Company Experience, Staff/Resources Experience, Proposed Project Solution and Approach, Pricing, References (Item 8.6), and explicit acceptance of Service Agreement Terms and Conditions."
+            }
+        ]
+    },
+    "mandatory_technical_requirements": {
+        "correct": 5,
+        "total": 5,
+        "accuracy": 100.0,
+        "failures": []
+    },
+    "evaluation_criteria": {
+        "correct": 3,
+        "total": 5,
+        "accuracy": 60.0,
+        "failures": [
+            {
+                "rfp_name": "City of Medicine Hat - LMS tender.pdf",
+                "expected": "Stage 1: Technical Capability (50 pts), Vendor Experience & References (15 pts), Implementation & Support (20 pts), Pricing (15 pts). Stage 2 (Demo): Product Demonstration (30 pts). Total: 130 points.",
+                "predicted": "Stage I: Technical Capability (50 points, minimum 35 to proceed); Stage II: Product Demonstration (30 points); Stage III: Vendor Experience & References (15 points), Implementation & Support (20 points), and Pricing (15 points). Total points: 130."
+            },
+            {
+                "rfp_name": "RFP CP-730126 Generative AI RFP (4).pdf",
+                "expected": "Technical & AI Platform Services (30 pts), Optional Services (5 pts), Professional Services (5 pts), Proponent Qualifications (10 pts), Support & Management (10 pts), Cost (30 pts), University Benefit & Sustainability (5 pts), Indigenous Participation (5 pts). Total: 100 points.",
+                "predicted": "a) TECHNICAL & AI PLATFORM SERVICES (30 points); b) OPTIONAL SERVICES (5 points); c) PROFESSIONAL SERVICES (5 points); d) PROPONENT QUALIFICATIONS (10 points); e) SUPPORT & MANAGEMENT (10 points); f) COST (30 points); g) UNIVERSITY BENEFIT & SUSTAINABILITY (5 points); h) INDIGENOUS PARTICIPATION (5 points)."
+            }
+        ]
+    },
+    "minimum_score_threshold": {
+        "correct": 3,
+        "total": 5,
+        "accuracy": 60.0,
+        "failures": [
+            {
+                "rfp_name": "AB-2026-05648-197-2027 RFP Learning Management System (LMS) Platform  Support (2).pdf",
+                "expected": "Satisfactory outcome on reference checks (yes/no pass threshold).",
+                "predicted": "Proposals not clearly meeting mandatory requirements in section 7.1 will be considered non-compliant and will not be evaluated."
+            },
+            {
+                "rfp_name": "City of Medicine Hat - LMS tender.pdf",
+                "expected": "Minimum technical score of 35 out of 50 points in Stage 1 to advance.",
+                "predicted": "Proponents must achieve a minimum technical score of 35 out of 50 points to meet the technical threshold and proceed to the next stage."
+            }
+        ]
+    },
+    "pricing_requirements": {
+        "correct": 5,
+        "total": 5,
+        "accuracy": 100.0,
+        "failures": []
+    },
+    "minimum_insurance_requirements": {
+        "correct": 5,
+        "total": 5,
+        "accuracy": 100.0,
+        "failures": []
+    },
+    "vendor_experience_qualifications": {
+        "correct": 5,
+        "total": 5,
+        "accuracy": 100.0,
+        "failures": []
+    },
+    "number_of_references_required": {
+        "correct": 5,
+        "total": 5,
+        "accuracy": 100.0,
+        "failures": []
+    },
+    "data_security_privacy_requirements": {
+        "correct": 5,
+        "total": 5,
+        "accuracy": 100.0,
+        "failures": []
+    },
+    "data_hosting_residency_requirements": {
+        "correct": 5,
+        "total": 5,
+        "accuracy": 100.0,
+        "failures": []
+    },
+    "vendor_demonstration_requirement": {
+        "correct": 4,
+        "total": 5,
+        "accuracy": 80.0,
+        "failures": [
+            {
+                "rfp_name": "AB-2025-02456-RFP #25-004ERP Requirements Analysis and Readiness Review_Final (1).pdf",
+                "expected": "Yes, shortlisted proponents may be called for a 2nd level interview and product presentation/demonstration.",
+                "predicted": "Shortlisted vendors will be invited to provide a product demonstration and assist the County in clarifying queries prior to the demonstration process."
+            }
+        ]
+    }
+}

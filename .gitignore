@@ -14,3 +14,5 @@ __pycache__/
 
 # أوزان الموديلات (ملفات ضخمة)
 models/
+
+node_modules/

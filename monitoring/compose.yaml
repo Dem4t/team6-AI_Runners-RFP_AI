@@ -1,0 +1,83 @@
+name: rfp-monitoring
+services:
+  prometheus:
+    image: prom/prometheus:v3.14.0
+    network_mode: host
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.listen-address=127.0.0.1:9090
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=3d
+      - --storage.tsdb.retention.size=1GB
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    mem_limit: 1g
+    cpus: 1.0
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    logging:
+      driver: json-file
+      options: {max-size: 10m, max-file: '2'}
+  grafana:
+    image: grafana/grafana:13.2.2
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      GF_SERVER_HTTP_ADDR: 127.0.0.1
+      GF_SERVER_HTTP_PORT: '3000'
+      GF_SERVER_ROOT_URL: https://t06-ide.aidc.nadir.sh/proxy/3000/
+      GF_SERVER_SERVE_FROM_SUB_PATH: 'false'
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?Set GRAFANA_ADMIN_PASSWORD in this terminal}
+      GF_USERS_ALLOW_SIGN_UP: 'false'
+      GF_AUTH_ANONYMOUS_ENABLED: 'false'
+      GF_ANALYTICS_REPORTING_ENABLED: 'false'
+      GF_ANALYTICS_CHECK_FOR_UPDATES: 'false'
+    configs:
+      - source: datasource
+        target: /etc/grafana/provisioning/datasources/rfp.yml
+      - source: dashboard-provider
+        target: /etc/grafana/provisioning/dashboards/rfp.yml
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./dashboard.json:/var/lib/grafana/dashboards/rfp.json:ro
+    mem_limit: 512m
+    cpus: 1.0
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    logging:
+      driver: json-file
+      options: {max-size: 10m, max-file: '2'}
+configs:
+  datasource:
+    content: |
+      apiVersion: 1
+      datasources:
+        - name: RFP Prometheus
+          uid: rfp-prometheus
+          type: prometheus
+          access: proxy
+          url: http://127.0.0.1:9090
+          isDefault: true
+          editable: false
+          jsonData:
+            httpMethod: POST
+            timeInterval: 15s
+  dashboard-provider:
+    content: |
+      apiVersion: 1
+      providers:
+        - name: RFP Monitoring
+          orgId: 1
+          folder: RFP Monitoring
+          type: file
+          disableDeletion: true
+          allowUiUpdates: false
+          updateIntervalSeconds: 30
+          options:
+            path: /var/lib/grafana/dashboards
+volumes:
+  prometheus-data:
+  grafana-data:
