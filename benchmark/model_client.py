@@ -27,22 +27,30 @@ logger = logging.getLogger(__name__)
 
 
 class LiftModelClient:
-    def __init__(self, endpoint_url: str = "http://localhost:8000/v1"):
-        self.endpoint_url = endpoint_url.rstrip("/")
-        self.name = "/home/ubuntu/models/lift"
+    def __init__(
+        self,
+        endpoint_url: str | None = None,
+        model_name: str | None = None,
+    ):
+        self.endpoint_url = (
+            endpoint_url
+            or os.getenv("MODEL_BASE_URL", "http://localhost:8000/v1")
+        ).rstrip("/")
 
-        # Reuse the same HTTP connection instead of creating a new
-        # TCP connection for every PDF request.
+        self.name = (
+            model_name
+            or os.getenv("MODEL_NAME", "/home/ubuntu/models/lift")
+        )
+
         self.session = requests.Session()
 
-        # Keep connections alive and avoid unnecessary HTTP overhead.
         self.session.headers.update({
             "Connection": "keep-alive"
         })
 
         logger.info(
-            f"Initializing Lift HTTP Client with Schema Prompts "
-            f"(vLLM at {self.endpoint_url})"
+            f"Initializing Lift HTTP Client "
+            f"(vLLM at {self.endpoint_url}, model={self.name})"
         )
 
     def extract_from_pdf(

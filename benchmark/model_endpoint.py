@@ -31,7 +31,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-client = LiftModelClient(endpoint_url="http://localhost:8000/v1")
+client = LiftModelClient(
+    endpoint_url=os.getenv(
+        "MODEL_BASE_URL",
+        "http://localhost:8000/v1"
+    ),
+    model_name=os.getenv(
+        "MODEL_NAME",
+        "/home/ubuntu/models/lift"
+    )
+)
 
 
 # ============================================================

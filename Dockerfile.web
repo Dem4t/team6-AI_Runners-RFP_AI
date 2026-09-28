@@ -15,7 +15,7 @@ if ([...source.matchAll(api)].length !== 1) {
 }
 source = source.replace(api, "fetch('./api/v1/extract'");
 source = source.replaceAll('http://localhost:3000/d/rfp-infrastructure-v1/',
-  'https://t06-ide.aidc.nadir.sh/proxy/3000/d/vllm-master-v2/');
+  'http://localhost:3000/d/rfp-infrastructure-v1/');
 fs.writeFileSync(file, source);
 JS
 RUN npm run build -- --base=./
