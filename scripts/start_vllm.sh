@@ -29,6 +29,10 @@ if ! python -c "import vllm" >/dev/null 2>&1; then
   exit 1
 fi
 
+echo "Starting vLLM"
+echo "Model: $MODEL_NAME"
+echo "Port:  $VLLM_PORT"
+
 exec python -m vllm serve "$MODEL_NAME" \
   --dtype "$VLLM_DTYPE" \
   --gpu-memory-utilization "$VLLM_GPU_MEMORY_UTILIZATION" \
