@@ -1,0 +1,19 @@
+# Allow only the inputs needed by this Dockerfile.
+**
+!Dockerfile.web
+!Dockerfile.web.dockerignore
+!requirements.txt
+!web_container.py
+!benchmark/
+!benchmark/**/*.py
+!frontend/
+!frontend/**
+frontend/node_modules
+frontend/dist
+frontend/.git
+frontend/**/.env*
+frontend/.env*
+frontend/**/*.pem
+frontend/**/*.key
+frontend/**/*.log
+frontend/**/__pycache__

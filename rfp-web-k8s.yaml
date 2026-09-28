@@ -1,0 +1,93 @@
+# Single-node deployment using the locally imported, tested web image.
+# Guardrails configuration remains on aidc-t06 and is mounted read-only.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rfp-web
+  namespace: rfp-ai
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  progressDeadlineSeconds: 600
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: rfp-web
+  template:
+    metadata:
+      labels:
+        app: rfp-web
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: aidc-t06
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 180
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: web
+          image: docker.io/library/rfp-web:0.1
+          imagePullPolicy: Never
+          ports:
+            - name: http
+              containerPort: 8081
+          env:
+            - name: MODEL_BASE_URL
+              value: http://lift-serving.rfp-ai.svc.cluster.local:8000/v1
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+              ephemeral-storage: 256Mi
+            limits:
+              cpu: "2"
+              memory: 4Gi
+              ephemeral-storage: 4Gi
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 60
+          # The existing extraction handler blocks during synchronous inference.
+          # A TCP probe avoids removing the sole replica during long requests.
+          # This checks the listening socket, not inference or guardrails quality.
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+          volumeMounts:
+            - name: guardrails
+              mountPath: /app/guardrails_config
+              readOnly: true
+      volumes:
+        - name: guardrails
+          hostPath:
+            path: /home/ubuntu/team6-AI_Runners-RFP_AI/guardrails_config
+            type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rfp-web
+  namespace: rfp-ai
+spec:
+  type: ClusterIP
+  selector:
+    app: rfp-web
+  ports:
+    - name: http
+      port: 8081
+      targetPort: http

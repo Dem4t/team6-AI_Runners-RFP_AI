@@ -1,0 +1,115 @@
+# Target: aidc-t06. Existing local model; one GPU; no public ingress.
+# Create namespace rfp-ai before server-side validation.
+# Keep one replica: this node has one GPU.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lift
+  namespace: rfp-ai
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  progressDeadlineSeconds: 1800
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: rfp-lift
+  template:
+    metadata:
+      labels:
+        app: rfp-lift
+    spec:
+      runtimeClassName: nvidia
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      nodeSelector:
+        kubernetes.io/hostname: aidc-t06
+      terminationGracePeriodSeconds: 120
+      containers:
+        - name: engine
+          image: vllm/vllm-openai:v0.29.0@sha256:c2914767605584b6d8f45686b82de173ecc99e781897aa3d0a66dacd72c51ae1
+          imagePullPolicy: IfNotPresent
+          args:
+            - --model=/home/ubuntu/models/lift
+            - --dtype=bfloat16
+            - --gpu-memory-utilization=0.85
+            - --max-model-len=32768
+            - --host=0.0.0.0
+            - --port=8000
+          env:
+            - name: VLLM_NO_USAGE_STATS
+              value: "1"
+            - name: HF_HUB_OFFLINE
+              value: "1"
+            - name: HF_HOME
+              value: /cache/huggingface
+            - name: XDG_CACHE_HOME
+              value: /cache
+          ports:
+            - name: http
+              containerPort: 8000
+          resources:
+            requests:
+              cpu: "4"
+              memory: 32Gi
+              nvidia.com/gpu: 1
+            limits:
+              cpu: "8"
+              memory: 40Gi
+              nvidia.com/gpu: 1
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 120
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 5
+          volumeMounts:
+            - name: model
+              mountPath: /home/ubuntu/models/lift
+              readOnly: true
+            - name: shm
+              mountPath: /dev/shm
+            - name: cache
+              mountPath: /cache
+      volumes:
+        - name: model
+          hostPath:
+            path: /home/ubuntu/models/lift
+            type: Directory
+        - name: shm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 4Gi
+        - name: cache
+          emptyDir:
+            sizeLimit: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lift-serving
+  namespace: rfp-ai
+spec:
+  type: ClusterIP
+  selector:
+    app: rfp-lift
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http

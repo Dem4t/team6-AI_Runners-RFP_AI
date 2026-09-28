@@ -1,0 +1,37 @@
+# syntax=docker/dockerfile:1
+FROM node:22-bookworm-slim AS frontend
+WORKDIR /build
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci --no-audit --no-fund
+COPY frontend/ ./
+# Adjust only the build copy. Keep the team's source files unchanged.
+RUN node <<'JS'
+const fs = require('node:fs');
+const file = 'src/App.jsx';
+let source = fs.readFileSync(file, 'utf8');
+const api = /fetch\((['"])\/api\/v1\/extract\1/g;
+if ([...source.matchAll(api)].length !== 1) {
+  throw new Error('Expected exactly one extraction request in App.jsx; review before building.');
+}
+source = source.replace(api, "fetch('./api/v1/extract'");
+source = source.replaceAll('http://localhost:3000/d/rfp-infrastructure-v1/',
+  'https://t06-ide.aidc.nadir.sh/proxy/3000/d/vllm-master-v2/');
+fs.writeFileSync(file, source);
+JS
+RUN npm run build -- --base=./
+
+FROM python:3.10-slim-bookworm AS runtime
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    HOME=/tmp
+WORKDIR /app
+COPY requirements.txt ./
+RUN python -m pip install -r requirements.txt pypdf==6.19.0 && python -m pip check
+COPY benchmark/ ./benchmark/
+COPY web_container.py ./
+COPY --from=frontend /build/dist/ ./frontend/dist/
+RUN useradd --uid 10001 --no-create-home appuser
+USER 10001:10001
+EXPOSE 8081
+CMD ["python", "-m", "uvicorn", "web_container:app", "--host", "0.0.0.0", "--port", "8081", "--workers", "1"]

@@ -27,8 +27,8 @@ services:
     environment:
       GF_SERVER_HTTP_ADDR: 0.0.0.0  
       GF_SERVER_HTTP_PORT: '3000'
-      GF_SERVER_DOMAIN: localhost
-      GF_SERVER_ROOT_URL: "https://t06-ide.aidc.nadir.sh/proxy/3000/"
+      GF_SERVER_DOMAIN: t06-ide.aidc.nadir.sh
+      GF_SERVER_ROOT_URL: https://t06-ide.aidc.nadir.sh/proxy/3000/
       GF_SERVER_SERVE_FROM_SUB_PATH: "false"
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: admin

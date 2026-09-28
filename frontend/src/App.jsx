@@ -47,10 +47,26 @@ export default function App() {
       });
 
       if (!response.ok) {
-        const errData = await response.json();
-        throw new Error(
-          errData.detail || 'Failed to extract RFP fields.'
-        );
+        let errorMessage = `Request failed with status ${response.status}`;
+
+        try {
+          const contentType = response.headers.get('content-type') || '';
+
+          if (contentType.includes('application/json')) {
+            const errData = await response.json();
+            errorMessage = errData.detail || errData.message || errorMessage;
+          } else {
+            const text = await response.text();
+
+            if (text.trim()) {
+              errorMessage = text.slice(0, 500);
+            }
+          }
+        } catch {
+          // Keep the original HTTP error
+        }
+
+        throw new Error(errorMessage);
       }
 
       const result = await response.json();
@@ -839,12 +855,17 @@ export default function App() {
             </h1>
           </div>
 
-          <div className="metrics-button">
-            <span className="metrics-dot"></span>
-            System metrics
-            <span style={{ fontSize: 11 }}>↗</span>
-          </div>
-        </header>
+            <div
+              className="metrics-button"
+              onClick={() => window.open("http://localhost:3000/d/rfp-infrastructure-v1/", "_blank")}
+              role="button"
+              tabIndex={0}
+            >
+              <span className="metrics-dot"></span>
+              System metrics
+              <span style={{ fontSize: 11 }}>↗</span>
+            </div>
+         </header>
 
 
         {/* =========================
@@ -926,7 +947,7 @@ export default function App() {
 
               {error && (
                 <div className="error">
-                  <strong>Error:</strong> {error}
+                  <strong>Malicious Activity</strong> {error}
                 </div>
               )}
 

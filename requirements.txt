@@ -1,0 +1,10 @@
+fastapi==0.136.3
+uvicorn==0.53.0
+python-multipart==0.0.32
+nemoguardrails==0.24.1
+pymupdf==1.28.2
+openai==3.16.2
+requests==2.34.2
+pydantic==2.13.5
+python-dotenv==1.2.3
+jinja2==3.1.6
