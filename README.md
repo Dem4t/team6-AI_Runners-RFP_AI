@@ -4,6 +4,15 @@ AI-powered system for extracting structured information from Request for Proposa
 
 The project is designed to run **locally** without depending on the team's development server or external AI APIs.
 
+`team6-AI_Runners-RFP_AI`
+
+The project was developed as part of an AI infrastructure / AI engineering project focusing on model serving, RFP document extraction, security, benchmarking, and observability.
+
+### Team Members
+
+- Abdullah-Alqahtani
+- AmrAlghamidi
+- turki alotaibi
 ---
 
 ## Overview
@@ -636,13 +645,3 @@ The project focuses on:
 **Project:** RFP AI
 
 **Repository:**
-
-`team6-AI_Runners-RFP_AI`
-
-The project was developed as part of an AI infrastructure / AI engineering project focusing on model serving, RFP document extraction, security, benchmarking, and observability.
-
-### Team Members
-
-- Abdullah-Alqahtani
-- AmrAlghamidi
-- turki alotaibi
