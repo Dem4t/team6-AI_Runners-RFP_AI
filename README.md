@@ -2,25 +2,16 @@
 
 AI-powered system for extracting structured information from Request for Proposal (RFP) PDF documents using a locally hosted vision model, FastAPI, React, vLLM, and NVIDIA NeMo Guardrails.
 
-The project is designed to run **locally** without depending on the team's development server or external AI APIs.
+The project is designed to run locally without depending on the team's development server or external AI APIs.
 
-`team6-AI_Runners-RFP_AI`
+---
 
-The project was developed as part of an AI infrastructure / AI engineering project focusing on model serving, RFP document extraction, security, benchmarking, and observability.
-## Team Project
+## Team Members
 
-**Project:** RFP AI
+* **Abdullah Alqahtani** — https://github.com/Abdullah-Alqhtani
+* **Amr Alghamidi** — https://github.com/AmrAlghamidi
+* **Turki Alotaibi** — https://github.com/turki-alotaibi9
 
-**Repository:**
-
-### Team Members
-
-- Abdullah Alqahtani
-  https://github.com/Abdullah-Alqhtani
-- Amr Alghamidi
-  https://github.com/AmrAlghamidi
-- Turki Alotaibi
-  https://github.com/turki-alotaibi9
 ---
 
 ## Overview
@@ -59,7 +50,7 @@ Web Interface
 * Prompt-injection detection
 * Pre-inference security validation
 * Post-inference security validation
-* JSON output
+* Structured JSON output
 * Benchmark evaluation
 * Field-level accuracy reporting
 * Kubernetes deployment manifests
@@ -83,7 +74,7 @@ Web Interface
 
 ### AI / Inference
 
-* vLLM
+* vLLM 0.29.0
 * Lift Vision Model
 * OpenAI-compatible API
 
@@ -92,6 +83,7 @@ Web Interface
 * React
 * Vite
 * JavaScript
+* CSS
 
 ### Infrastructure
 
@@ -117,9 +109,6 @@ Web Interface
 │   └── test_model_client.py
 │
 ├── benchmark_outputs/
-│   ├── *.json
-│   ├── *.md
-│   └── field_accuracy_report.json
 │
 ├── data/
 │   ├── ground_truth/
@@ -141,19 +130,24 @@ Web Interface
 │   ├── dashboard.json
 │   └── prometheus.yml
 │
+├── scripts/
+│   └── start_vllm.sh
+│
 ├── Dockerfile.web
 ├── lift-k8s.yaml
 ├── rfp-web-k8s.yaml
 ├── requirements.txt
+├── requirements-vllm.txt
+├── .env.example
 ├── web_container.py
 └── README.md
 ```
 
 ---
 
-## Extracted RFP Fields
+# RFP Extraction Schema
 
-The current schema contains 17 fields:
+The current extraction schema contains 17 fields:
 
 1. Submission Deadline
 2. Deadline for Questions
@@ -185,17 +179,20 @@ benchmark/schema.py
 
 ## Requirements
 
-Install the following before running the project:
+For the full local extraction workflow, install:
 
+* Linux recommended for local GPU inference
 * Python 3.10+
 * Node.js 20+
 * npm
 * Git
-* vLLM
+* NVIDIA GPU
+* Working NVIDIA drivers
 * A compatible local vision model
-* NVIDIA GPU recommended for local model inference
 
-The project does **not** require an external AI API.
+The repository does **not** include model weights.
+
+The frontend and backend can be started without a running model, but actual RFP extraction requires a working vLLM server and a compatible model.
 
 ---
 
@@ -208,70 +205,150 @@ cd team6-AI_Runners-RFP_AI
 
 ---
 
-## 2. Start the Local Model
+## 2. Create the Python Environment
 
-The backend expects an OpenAI-compatible vLLM endpoint at:
-
-```text
-http://localhost:8000/v1
-```
-
-Example:
-
-```bash
-vllm serve /path/to/your/model \
-  --host 0.0.0.0 \
-  --port 8000
-```
-
-Verify that vLLM is running:
-
-```bash
-curl http://localhost:8000/v1/models
-```
-
-Make sure the model is compatible with the project's PDF-to-image extraction workflow.
-
----
-
-## 3. Configure the Model
-
-The backend supports environment variables so different machines do not need source-code changes.
-
-Default values:
-
-```bash
-MODEL_BASE_URL=http://localhost:8000/v1
-MODEL_NAME=/home/ubuntu/models/lift
-```
-
-Example for a different local model:
-
-```bash
-export MODEL_BASE_URL=http://localhost:8000/v1
-export MODEL_NAME=my-local-model
-```
-
-The model name must match the model name exposed by vLLM.
-
----
-
-# 4. Start the Backend
-
-Create a Python virtual environment:
+Create a virtual environment:
 
 ```bash
 python3 -m venv .venv
+```
+
+Activate it:
+
+```bash
 source .venv/bin/activate
 ```
 
-Install dependencies:
+Upgrade pip:
+
+```bash
+python -m pip install --upgrade pip
+```
+
+Install backend dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Start the FastAPI server:
+Install vLLM separately:
+
+```bash
+pip install -r requirements-vllm.txt
+```
+
+Verify the installation:
+
+```bash
+python -m vllm --version
+```
+
+The repository uses vLLM `0.29.0` for the local model-serving setup.
+
+---
+
+# 3. Configure the Model
+
+Copy the environment template:
+
+```bash
+cp .env.example .env
+```
+
+The `.env` file contains the model configuration.
+
+Example:
+
+```env
+MODEL_BASE_URL=http://localhost:8000/v1
+MODEL_NAME=/home/ubuntu/models/lift
+```
+
+### MODEL_BASE_URL
+
+The backend expects an OpenAI-compatible vLLM endpoint.
+
+Default:
+
+```text
+http://localhost:8000/v1
+```
+
+### MODEL_NAME
+
+This must match the model path/name that vLLM serves.
+
+Example:
+
+```env
+MODEL_NAME=/home/ubuntu/models/lift
+```
+
+On another machine, replace it with the actual local model path:
+
+```env
+MODEL_NAME=/path/to/your/model
+```
+
+Do not commit `.env`.
+
+---
+
+# 4. Start vLLM
+
+The repository provides a startup script:
+
+```bash
+bash scripts/start_vllm.sh
+```
+
+The script starts vLLM using:
+
+```bash
+python -m vllm serve
+```
+
+This avoids depending on a globally installed `vllm` executable.
+
+The default configuration is:
+
+```text
+Host: 0.0.0.0
+Port: 8000
+Dtype: bfloat16
+GPU Memory Utilization: 0.85
+Maximum Model Length: 32768
+```
+
+The script reads the model configuration from `.env`.
+
+Verify that the server is running:
+
+```bash
+curl http://localhost:8000/v1/models
+```
+
+A successful response should contain the models exposed by the vLLM server.
+
+---
+
+# 5. Start the Backend
+
+Open a second terminal.
+
+Navigate to the project:
+
+```bash
+cd team6-AI_Runners-RFP_AI
+```
+
+Activate the virtual environment:
+
+```bash
+source .venv/bin/activate
+```
+
+Start FastAPI:
 
 ```bash
 cd benchmark
@@ -298,13 +375,25 @@ http://localhost:8081/health
 
 ---
 
-# 5. Start the Frontend
+# 6. Start the Frontend
 
-Open another terminal:
+Open a third terminal.
+
+Navigate to the frontend:
 
 ```bash
-cd frontend
+cd team6-AI_Runners-RFP_AI/frontend
+```
+
+Install frontend dependencies:
+
+```bash
 npm ci
+```
+
+Start Vite:
+
+```bash
 npm run dev
 ```
 
@@ -320,19 +409,51 @@ The Vite development server proxies API requests to:
 http://localhost:8081
 ```
 
-Therefore, the frontend does not need a hard-coded backend IP address.
+This means the frontend does not contain a hard-coded team-server IP.
 
 ---
 
 # Local Ports
 
-| Component       | Local Address              |
+| Component       | Address                    |
 | --------------- | -------------------------- |
 | Frontend        | `http://localhost:5173`    |
 | FastAPI Backend | `http://localhost:8081`    |
 | vLLM            | `http://localhost:8000/v1` |
 | Prometheus      | `http://localhost:9090`    |
 | Grafana         | `http://localhost:3000`    |
+
+---
+
+# Running the Full Application
+
+Once all services are running:
+
+```text
+Browser
+   │
+   ▼
+http://localhost:5173
+   │
+   │ /api
+   ▼
+http://localhost:8081
+   │
+   │ OpenAI-compatible API
+   ▼
+http://localhost:8000/v1
+   │
+   ▼
+Local Vision Model
+```
+
+The user only needs to open:
+
+```text
+http://localhost:5173
+```
+
+and upload an RFP PDF.
 
 ---
 
@@ -355,13 +476,19 @@ Example:
 }
 ```
 
+---
+
 ## Extract RFP
 
 ```http
 POST /api/v1/extract
 ```
 
-Upload a PDF using the `file` form field.
+Upload a PDF using the multipart form field:
+
+```text
+file
+```
 
 Example response:
 
@@ -383,48 +510,64 @@ Example response:
 
 # Security
 
-The extraction pipeline contains multiple security layers.
+The extraction pipeline uses multiple security layers.
 
-## 1. Deterministic Prompt-Injection Detection
+## 1. PDF Security Inspection
 
-The API checks PDF text against known malicious instruction patterns before model inference.
+The uploaded PDF is inspected before model inference.
 
-Examples include attempts to:
+The system extracts text from the PDF for security analysis.
+
+---
+
+## 2. Deterministic Prompt-Injection Detection
+
+The API checks the document against known malicious instruction patterns.
+
+Examples include:
 
 * Ignore previous instructions
-* Disregard the extraction schema
-* Bypass security controls
-* Reveal system prompts
-* Execute unrelated code
+* Disregard the schema
+* Bypass security
+* Print the system prompt
+* Write a Python script
 
-## 2. NVIDIA NeMo Guardrails
+When a detected pattern matches, the request is blocked.
 
-The project uses:
+---
+
+## 3. NVIDIA NeMo Guardrails
+
+The project uses NVIDIA NeMo Guardrails for semantic security validation.
+
+Configuration:
 
 ```text
 guardrails_config/config.yml
 guardrails_config/rails.co
 ```
 
-to perform semantic security validation.
+Guardrails are applied before model inference.
 
-## 3. Post-Inference Validation
+---
 
-Extracted fields are checked again before the response is returned to the frontend.
+## 4. Post-Inference Validation
 
-If a security violation is detected, the response is blocked.
+The generated extraction is checked again before being returned to the frontend.
+
+If a security violation is detected, the API blocks the response.
 
 ---
 
 # Benchmark
 
-Benchmark inputs are stored in:
+Benchmark RFP documents are stored in:
 
 ```text
 data/rfps/
 ```
 
-Expected outputs are stored in:
+Ground-truth results are stored in:
 
 ```text
 data/ground_truth/
@@ -436,17 +579,27 @@ Run the benchmark:
 python3 benchmark/run_benchmark.py
 ```
 
-Results are written to:
+Results are generated in:
 
 ```text
 benchmark_outputs/
 ```
 
-Field-level accuracy is reported in:
+The field-level report is:
 
 ```text
 benchmark_outputs/field_accuracy_report.json
 ```
+
+Benchmark results can include:
+
+* Field accuracy
+* Per-RFP accuracy
+* Latency
+* Input tokens
+* Output tokens
+* Total tokens
+* Field-level failures
 
 ---
 
@@ -454,7 +607,15 @@ benchmark_outputs/field_accuracy_report.json
 
 Monitoring is optional for local development.
 
-Start Prometheus and Grafana:
+The project includes:
+
+* Prometheus
+* Grafana
+* Node Exporter metrics
+* NVIDIA DCGM metrics
+* vLLM metrics
+
+Start the monitoring stack:
 
 ```bash
 cd monitoring
@@ -473,7 +634,17 @@ Grafana:
 http://localhost:3000
 ```
 
-The monitoring stack can collect information related to:
+---
+
+## Monitoring Dashboard
+
+The Grafana dashboard is stored in:
+
+```text
+monitoring/dashboard.json
+```
+
+The monitoring stack can display metrics such as:
 
 * GPU utilization
 * GPU memory
@@ -483,41 +654,59 @@ The monitoring stack can collect information related to:
 * RAM usage
 * Network traffic
 * vLLM request activity
-* Token usage
-* Request completion
-* Model serving telemetry
-
-The dashboard is located at:
-
-```text
-monitoring/dashboard.json
-```
+* Waiting requests
+* Completed requests
+* Generated tokens
+* Prompt tokens
+* Token throughput
+* Cache activity
+* Preemptions
 
 ---
 
 # Docker
 
-The repository also contains:
+The repository contains a Docker build for the web application:
 
 ```text
 Dockerfile.web
 ```
 
-for packaging the frontend and FastAPI application.
+Build the image:
 
-The container expects a running model endpoint through:
+```bash
+docker build -f Dockerfile.web -t rfp-web:0.1 .
+```
+
+The application container exposes:
+
+```text
+8081
+```
+
+The model endpoint is configured through:
+
+```text
+MODEL_BASE_URL
+```
+
+Example:
 
 ```bash
 MODEL_BASE_URL=http://localhost:8000/v1
 ```
 
-For containerized deployments, make sure the application container can reach the machine or container hosting vLLM.
+When running inside Docker, make sure the container can reach the machine or container hosting vLLM.
 
 ---
 
 # Kubernetes
 
-Kubernetes manifests are provided for environments that already have a Kubernetes cluster and NVIDIA GPU support.
+The repository includes Kubernetes manifests for environments with:
+
+* Kubernetes
+* NVIDIA GPU support
+* A local model available to the cluster
 
 Files:
 
@@ -526,105 +715,337 @@ lift-k8s.yaml
 rfp-web-k8s.yaml
 ```
 
-These deployment files are separate from the normal local-development workflow.
+These manifests are **not required** for normal local development.
+
+The Kubernetes deployment uses the vLLM service internally rather than the local development ports described above.
 
 ---
 
-# Configuration
+# Environment Variables
 
-The main backend environment variables are:
+The main environment variables are:
 
-```bash
+```env
 MODEL_BASE_URL=http://localhost:8000/v1
 MODEL_NAME=/home/ubuntu/models/lift
 ```
 
-Example:
+Machine-specific configuration should be placed in `.env`.
 
-```bash
-export MODEL_BASE_URL=http://localhost:8000/v1
-export MODEL_NAME=my-local-model
+Example for another machine:
+
+```env
+MODEL_BASE_URL=http://localhost:8000/v1
+MODEL_NAME=/path/to/your/model
 ```
 
-Do not commit private credentials, API keys, or environment-specific secrets.
+Do not commit:
 
----
-
-# Local Development Notes
-
-The repository is intentionally configured so that the default development environment uses:
-
-```text
-localhost
-```
-
-No team-server IP address is required for normal local development.
-
-The project architecture is:
-
-```text
-React / Vite
-      ↓
-FastAPI
-      ↓
-Security Validation
-      ↓
-PDF Processing
-      ↓
-Local vLLM
-      ↓
-Lift Vision Model
-      ↓
-Structured JSON
-```
+* API keys
+* passwords
+* private endpoints
+* `.env` files
+* model weights
 
 ---
 
 # Troubleshooting
 
-## Backend cannot connect to the model
+## `vllm: command not found`
 
-Check that vLLM is running:
+Make sure the virtual environment is active:
+
+```bash
+source .venv/bin/activate
+```
+
+Install the project vLLM dependency:
+
+```bash
+pip install -r requirements-vllm.txt
+```
+
+Verify:
+
+```bash
+python -m vllm --version
+```
+
+Then start:
+
+```bash
+bash scripts/start_vllm.sh
+```
+
+---
+
+## vLLM Cannot Find the Model
+
+Check the configured model path:
+
+```bash
+echo $MODEL_NAME
+```
+
+Check that the path exists:
+
+```bash
+ls -ld "$MODEL_NAME"
+```
+
+Or set it manually:
+
+```bash
+export MODEL_NAME=/path/to/your/model
+```
+
+Then:
+
+```bash
+bash scripts/start_vllm.sh
+```
+
+---
+
+## vLLM Is Not Responding
+
+Check:
 
 ```bash
 curl http://localhost:8000/v1/models
 ```
 
-Then check the backend configuration:
+Also check whether port `8000` is listening:
 
 ```bash
-echo $MODEL_BASE_URL
-echo $MODEL_NAME
+ss -lntp | grep 8000
 ```
 
-## Frontend cannot connect to the backend
+---
 
-Check:
+## Backend Cannot Connect to vLLM
+
+First verify vLLM:
+
+```bash
+curl http://localhost:8000/v1/models
+```
+
+Then verify the backend:
 
 ```bash
 curl http://localhost:8081/health
 ```
 
-Then start the frontend again:
+Check the configured endpoint:
+
+```bash
+echo $MODEL_BASE_URL
+```
+
+It should normally be:
+
+```text
+http://localhost:8000/v1
+```
+
+---
+
+## Frontend Cannot Connect to Backend
+
+Check the backend:
+
+```bash
+curl http://localhost:8081/health
+```
+
+If it is working, restart Vite:
 
 ```bash
 cd frontend
 npm run dev
 ```
 
-## Guardrails fail to initialize
+Then open:
 
-Make sure the configuration exists:
+```text
+http://localhost:5173
+```
+
+---
+
+## NeMo Guardrails Fails to Initialize
+
+Make sure these files exist:
 
 ```text
 guardrails_config/config.yml
 guardrails_config/rails.co
 ```
 
-and that all Python dependencies have been installed:
+Then verify the Python environment:
 
 ```bash
+source .venv/bin/activate
 pip install -r requirements.txt
+```
+
+---
+
+# Development Architecture
+
+```text
+                    ┌──────────────────────┐
+                    │     React / Vite     │
+                    │    Frontend :5173    │
+                    └──────────┬───────────┘
+                               │
+                               │ /api
+                               ▼
+                    ┌──────────────────────┐
+                    │       FastAPI        │
+                    │     Backend :8081    │
+                    └──────────┬───────────┘
+                               │
+                ┌──────────────┴──────────────┐
+                │                             │
+                ▼                             ▼
+      ┌─────────────────┐          ┌─────────────────┐
+      │ Security Layer  │          │ PDF Processing  │
+      │ Regex + NeMo    │          │ PyMuPDF / pypdf │
+      └────────┬────────┘          └────────┬────────┘
+               │                            │
+               └──────────────┬─────────────┘
+                              ▼
+                    ┌──────────────────────┐
+                    │        vLLM          │
+                    │      :8000/v1        │
+                    └──────────┬───────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │   Lift Vision Model  │
+                    └──────────┬───────────┘
+                               │
+                               ▼
+                        Structured JSON
+```
+
+---
+
+# Local-First Configuration
+
+The repository is intentionally configured for local development.
+
+Default services:
+
+```text
+Frontend
+localhost:5173
+
+Backend
+localhost:8081
+
+vLLM
+localhost:8000
+
+Prometheus
+localhost:9090
+
+Grafana
+localhost:3000
+```
+
+No team-server IP address is required for normal local development.
+
+---
+
+# Model Weights
+
+Model weights are intentionally **not included in the Git repository** because they are large and environment-specific.
+
+Each developer must provide a compatible local model.
+
+The model path is configured using:
+
+```env
+MODEL_NAME=/path/to/your/model
+```
+
+---
+
+# Important Note About vLLM
+
+vLLM is intentionally maintained as a separate dependency from the main backend requirements.
+
+Backend dependencies:
+
+```text
+requirements.txt
+```
+
+Model-serving dependency:
+
+```text
+requirements-vllm.txt
+```
+
+This keeps the API environment separate from the GPU/model-serving environment while still providing a reproducible local setup.
+
+---
+
+# Quick Start
+
+For a complete local setup:
+
+### Terminal 1 — vLLM
+
+```bash
+cd team6-AI_Runners-RFP_AI
+
+python3 -m venv .venv
+source .venv/bin/activate
+
+pip install -r requirements.txt
+pip install -r requirements-vllm.txt
+
+cp .env.example .env
+```
+
+Set the correct model path in `.env`, then:
+
+```bash
+bash scripts/start_vllm.sh
+```
+
+---
+
+### Terminal 2 — Backend
+
+```bash
+cd team6-AI_Runners-RFP_AI
+
+source .venv/bin/activate
+
+cd benchmark
+uvicorn model_endpoint:app --host 0.0.0.0 --port 8081
+```
+
+---
+
+### Terminal 3 — Frontend
+
+```bash
+cd team6-AI_Runners-RFP_AI/frontend
+
+npm ci
+npm run dev
+```
+
+Open:
+
+```text
+http://localhost:5173
 ```
 
 ---
@@ -643,9 +1064,9 @@ The project focuses on:
 
 * AI-assisted RFP extraction
 * Local model serving
-* AI security
 * Prompt-injection protection
+* AI security
 * Benchmarking
 * Observability
 * Infrastructure deployment
-
+* Local-first development
