@@ -23,17 +23,18 @@ if [[ ! -d "$MODEL_NAME" ]]; then
   exit 1
 fi
 
-if ! python -c "import vllm" >/dev/null 2>&1; then
-  echo "vLLM is not installed."
+if ! command -v vllm >/dev/null 2>&1; then
+  echo "vLLM is not installed in the active Python environment."
   echo "Run: pip install -r requirements-vllm.txt"
   exit 1
 fi
 
 echo "Starting vLLM"
 echo "Model: $MODEL_NAME"
+echo "Host:  $VLLM_HOST"
 echo "Port:  $VLLM_PORT"
 
-exec python -m vllm serve "$MODEL_NAME" \
+exec vllm serve "$MODEL_NAME" \
   --dtype "$VLLM_DTYPE" \
   --gpu-memory-utilization "$VLLM_GPU_MEMORY_UTILIZATION" \
   --max-model-len "$VLLM_MAX_MODEL_LEN" \
