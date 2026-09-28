@@ -7,6 +7,11 @@ The project is designed to run **locally** without depending on the team's devel
 `team6-AI_Runners-RFP_AI`
 
 The project was developed as part of an AI infrastructure / AI engineering project focusing on model serving, RFP document extraction, security, benchmarking, and observability.
+## Team Project
+
+**Project:** RFP AI
+
+**Repository:**
 
 ### Team Members
 
@@ -643,8 +648,4 @@ The project focuses on:
 * Benchmarking
 * Observability
 * Infrastructure deployment
-## Team Project
 
-**Project:** RFP AI
-
-**Repository:**
