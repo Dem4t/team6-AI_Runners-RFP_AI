@@ -10,9 +10,9 @@ The project was developed as part of an AI infrastructure / AI engineering proje
 
 ### Team Members
 
-- Abdullah-Alqahtani
+- Abdullah Alqahtani
   https://github.com/Abdullah-Alqhtani
-- AmrAlghamidi
+- Amr Alghamidi
   https://github.com/AmrAlghamidi
 - Turki Alotaibi
   https://github.com/turki-alotaibi9
