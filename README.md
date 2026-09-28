@@ -631,3 +631,18 @@ The project focuses on:
 * Benchmarking
 * Observability
 * Infrastructure deployment
+## Team Project
+
+**Project:** RFP AI
+
+**Repository:**
+
+`team6-AI_Runners-RFP_AI`
+
+The project was developed as part of an AI infrastructure / AI engineering project focusing on model serving, RFP document extraction, security, benchmarking, and observability.
+
+### Team Members
+
+- Abdullah-Alqahtani
+- AmrAlghamidi
+- turki alotaibi
