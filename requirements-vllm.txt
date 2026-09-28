@@ -1,0 +1,3 @@
+# Model serving dependency
+vllm==0.29.0
+EOF
