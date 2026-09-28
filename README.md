@@ -1,131 +1,599 @@
-# RFP AI — Model Benchmark
+# RFP AI — Intelligent RFP Extraction System
 
-Capstone project for the SDA AI Data Center (AI Infrastructure) Bootcamp, in partnership with Beam Data.
+AI-powered system for extracting structured information from Request for Proposal (RFP) documents using a local vision-language model, FastAPI, React, and NVIDIA NeMo Guardrails.
+
+The system is designed to process RFP PDF documents, detect potential prompt-injection attempts, extract predefined fields into structured JSON, and expose the results through a web interface.
+
+---
 
 ## Overview
 
-This project benchmarks large language models on their ability to extract structured information from Request for Proposal (RFP) documents. The goal is to determine which model(s) — open-weight or proprietary — perform best at this task, so Beam Data can advise clients on model selection for RFP processing, and to establish whether a custom/fine-tuned model is even necessary.
+The system provides an end-to-end RFP extraction pipeline:
 
-**This is not an RFP-writing project.** The RFP PDFs in this repo are sample *input* documents used to test extraction accuracy — not templates for drafting a new proposal.
-
-## What this project does
-
-1. Deploys one open-weight LLM in Docker, pushed to Kubernetes.
-2. Gets API access to two additional models for comparison (three models total, minimum).
-3. Runs all three models against five sample RFP documents, extracting a defined list of information fields from each.
-4. Scores each model's extracted output against a ground-truth answer key.
-5. Measures token usage and latency per model.
-6. *(Time permitting)* Load-tests the deployed model.
-7. Reports results in a written benchmark report.
-8. Verifies the deployed model is live and interactive in AI Hub for the final demo.
-
-Fine-tuning, RAG, and building a full application are explicit **stretch goals only** — not required for the minimum deliverable.
-
-## Models compared
-
-| Role | Model | Notes |
-|---|---|---|
-| Deployed (Docker → Kubernetes) | Qwen3-8B-Instruct (4-bit quantized) | Apache 2.0 license, 128K context, strong multilingual/Arabic support, fits the 16GB VRAM budget |
-| API, no deployment required | OpenAI API — exact model **TBD** | Confirm the current model name/tier against OpenAI's live docs before finalizing; a "mini"-tier model is the fairer size-for-size comparison against an 8B open model |
-| Comparison, second open-weight | Llama 3.1 8B Instruct *or* Ministral 8B — **TBD** | Doesn't have to be self-deployed; a hosted inference API is acceptable |
-
-VRAM budget for the self-deployed model: **16GB** (roughly an 8B model at 4-bit quantization). If benchmarking shows a larger model (e.g. 14B) performs meaningfully better, that's worth flagging even if it isn't deployable within budget.
-
-## Sample RFPs used for benchmarking
-
-| # | Organization | Reference No. | Subject |
-|---|---|---|---|
-| 1 | Rocky View County | RFP 25-004 | ERP Requirements Analysis & Readiness Review |
-| 2 | Olds College of Agriculture and Technology | RFP 197-2027 | LMS Platform & Support |
-| 3 | City of Medicine Hat | CMH26-85 | Learning Management System (LMS) |
-| 4 | Cowichan Tribes (per attached pricing/requirements filenames) | RFP.24.25.04 | Enterprise Resource Planning (ERP) System |
-| 5 | University of Saskatchewan | CP-730126 | Generative Artificial Intelligence (AI) Software |
-
-## Fields to extract
-
-> ⚠️ **Not finalized.** The project guidance references "twenty fields" in one section but Appendix A lists only 17. Confirm the final list with Alex/Salman before running the benchmark.
-
-1. Submission Deadline (date & time)
-2. Deadline for Questions / Inquiries
-3. RFP Contact (name and/or email)
-4. Submission Method / Portal
-5. Contract Term / Duration (including renewal options)
-6. Scope of Deliverables / Services Requested
-7. Mandatory Submission Requirements
-8. Mandatory Technical Requirements
-9. Evaluation Criteria & Weighting (points breakdown by category)
-10. Minimum Score Threshold to Advance (where specified)
-11. Pricing Structure / Cost Submission Requirements
-12. Minimum Insurance Coverage Requirements (type and dollar amount)
-13. Required Vendor Experience / Qualifications
-14. Number of References Required
-15. Data Security / Privacy Compliance Requirements
-16. Data Hosting / Residency Requirements (where specified)
-17. Vendor Demonstration Requirement
-
-## Repository structure
-
-> Proposed layout — adjust to match what's actually in the repo as it's built out.
-
+```text
+RFP PDF
+   │
+   ▼
+React Web Interface
+   │
+   ▼
+FastAPI API
+   │
+   ├── PDF Security Check
+   │       ├── Regex-based detection
+   │       └── NVIDIA NeMo Guardrails
+   │
+   ▼
+Lift Vision Model / vLLM
+   │
+   ▼
+Structured JSON
+   │
+   ├── Post-inference security validation
+   │
+   ▼
+Web Interface
 ```
+
+---
+
+## Key Features
+
+* PDF upload and processing
+* Structured RFP information extraction
+* Local vLLM model serving
+* Vision-based PDF processing
+* NVIDIA NeMo Guardrails
+* Prompt-injection detection
+* Pre-inference security validation
+* Post-inference security validation
+* JSON output
+* Markdown benchmark outputs
+* Field-level accuracy evaluation
+* Token and latency tracking
+* Kubernetes deployment manifests
+* Prometheus and Grafana monitoring
+* React/Vite web interface
+
+---
+
+## Technology Stack
+
+### Backend
+
+* Python
+* FastAPI
+* Uvicorn
+* PyMuPDF
+* pypdf
+* Requests
+* Pydantic
+* NVIDIA NeMo Guardrails
+
+### AI / Inference
+
+* Lift Vision Model
+* vLLM
+* OpenAI-compatible API
+
+### Frontend
+
+* React
+* Vite
+* JavaScript
+* CSS
+
+### Infrastructure
+
+* Docker
+* Kubernetes
+* NVIDIA GPU
+* Prometheus
+* Grafana
+
+---
+
+## Project Structure
+
+```text
 .
+├── benchmark/
+│   ├── model_client.py
+│   ├── model_endpoint.py
+│   ├── pdf_parser.py
+│   ├── prompts.py
+│   ├── run_benchmark.py
+│   ├── schema.py
+│   └── test_model_client.py
+│
+├── benchmark_outputs/
+│   ├── *.json
+│   ├── *.md
+│   └── field_accuracy_report.json
+│
 ├── data/
-│   ├── rfps/                # the 5 sample RFP source PDFs
-│   └── ground_truth/        # annotated answer key per RFP (TBD — see Open Questions)
-├── deploy/
-│   ├── Dockerfile           # serving image (e.g. vLLM + quantized weights)
-│   └── k8s/                 # Deployment, Service manifests
-├── extraction/
-│   ├── prompts/             # extraction prompt / output schema used across all 3 models
-│   └── run_extraction.py    # calls each model against each RFP, logs output + tokens + latency
-├── scoring/
-│   └── score_extraction.py  # compares model output to ground truth
-├── report/
-│   └── benchmark_report.md  # final write-up
+│   ├── ground_truth/
+│   │   ├── RFP_01.json
+│   │   ├── RFP_02.json
+│   │   ├── RFP_03.json
+│   │   ├── RFP_04.json
+│   │   └── RFP_05.json
+│   │
+│   └── rfps/
+│       └── *.pdf
+│
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── App.jsx
+│   │   ├── App.css
+│   │   ├── index.css
+│   │   └── main.jsx
+│   ├── package.json
+│   ├── package-lock.json
+│   └── vite.config.js
+│
+├── guardrails_config/
+│   ├── config.yml
+│   └── rails.co
+│
+├── monitoring/
+│   ├── compose.yaml
+│   ├── dashboard.json
+│   └── prometheus.yml
+│
+├── Dockerfile.web
+├── lift-k8s.yaml
+├── rfp-web-k8s.yaml
+├── requirements.txt
+├── web_container.py
 └── README.md
 ```
 
-## Setup
+---
 
-> Fill in with actual commands once the deployment is built.
+## RFP Fields
 
-**Prerequisites**
-- Docker
-- Access to a Kubernetes cluster with GPU node(s)
-- `kubectl` configured against that cluster
-- API key for the OpenAI-comparison model
-- (If using a hosted API for the second open-weight model) API key for that provider
+The extraction schema currently contains 17 predefined fields, including:
 
-**Deploy the self-hosted model**
-```bash
-# 1. Build the serving image
-docker build -t <registry>/rfp-ai-model:latest -f deploy/Dockerfile .
+1. Submission Deadline
+2. Deadline for Questions / Inquiries
+3. RFP Contact
+4. Submission Method / Portal
+5. Contract Term / Duration
+6. Scope of Deliverables / Services
+7. Mandatory Submission Requirements
+8. Mandatory Technical Requirements
+9. Evaluation Criteria & Weighting
+10. Minimum Score Threshold
+11. Pricing Structure
+12. Insurance Requirements
+13. Vendor Experience / Qualifications
+14. Number of References Required
+15. Data Security / Privacy Requirements
+16. Data Hosting / Residency Requirements
+17. Vendor Demonstration Requirement
 
-# 2. Push to registry
-docker push <registry>/rfp-ai-model:latest
+The schema is defined in:
 
-# 3. Deploy to Kubernetes
-kubectl apply -f deploy/k8s/
-
-# 4. Verify the endpoint is up
-kubectl port-forward svc/<service-name> 8000:8000
-curl http://localhost:8000/v1/models
+```text
+benchmark/schema.py
 ```
 
-**Run the benchmark**
-```bash
-python extraction/run_extraction.py --rfp-dir data/rfps --output results/
-python scoring/score_extraction.py --results results/ --ground-truth data/ground_truth/
+---
+
+## Security
+
+Security validation is implemented in multiple layers.
+
+### 1. Deterministic Prompt-Injection Detection
+
+The API checks uploaded PDF text against known patterns such as:
+
+* Ignore previous instructions
+* Disregard the schema
+* Bypass security
+* Print the system prompt
+* Execute unrelated code
+
+### 2. NVIDIA NeMo Guardrails
+
+NeMo Guardrails performs semantic checks before model inference.
+
+The configuration is located in:
+
+```text
+guardrails_config/config.yml
+guardrails_config/rails.co
 ```
 
-## Open questions / known gaps
+### 3. Post-Inference Validation
 
-- **Ground truth**: not yet available — needs to be provided by Beamdata or created through annotation before scoring can happen.
-- **Field count discrepancy**: "twenty fields" (guidance text) vs. 17 fields (Appendix A) — needs confirmation.
-- **Accuracy scoring method**: not specified in the project guidance (exact match? partial credit? rubric?) — needs a decision.
-- **AI Hub integration**: how a Kubernetes-deployed model gets surfaced in AI Hub isn't documented — confirm with instructors.
-- **GPU provisioning**: whether cluster GPU nodes are already available or need to be provisioned.
+Extracted fields are checked again before being returned to the frontend.
 
-## License / Team
+If a security violation is detected, the API blocks the response instead of returning the extracted content.
 
-Add team members, license, and any Beamdata-specific attribution requirements here.
+---
+
+## API
+
+### Health Check
+
+```http
+GET /health
+```
+
+Example:
+
+```json
+{
+  "status": "active",
+  "model": "/home/ubuntu/models/lift",
+  "endpoint": "http://localhost:8000/v1",
+  "guardrails_active": true
+}
+```
+
+### Extract RFP
+
+```http
+POST /api/v1/extract
+```
+
+Upload a PDF using the `file` form field.
+
+Example response:
+
+```json
+{
+  "status": "success",
+  "filename": "example.pdf",
+  "latency_seconds": 12.4,
+  "tokens_used": 2048,
+  "extracted_fields": {
+    "Submission Deadline": "...",
+    "RFP Contact": "...",
+    "Scope of Deliverables / Services": "..."
+  }
+}
+```
+
+---
+
+## Running the Backend
+
+Install Python dependencies:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+The application expects the local vLLM server to expose an OpenAI-compatible API on:
+
+```text
+http://localhost:8000/v1
+```
+
+Start the API from the `benchmark` directory:
+
+```bash
+cd benchmark
+uvicorn model_endpoint:app --host 0.0.0.0 --port 8081
+```
+
+API documentation:
+
+```text
+http://localhost:8081/docs
+```
+
+Health check:
+
+```text
+http://localhost:8081/health
+```
+
+---
+
+## Running the Frontend
+
+```bash
+cd frontend
+npm ci
+npm run dev
+```
+
+The Vite development server normally runs on:
+
+```text
+http://localhost:5173
+```
+
+For a production build:
+
+```bash
+npm run build
+```
+
+---
+
+## Running the Benchmark
+
+The benchmark processes the RFP files located in:
+
+```text
+data/rfps/
+```
+
+and compares the model output against:
+
+```text
+data/ground_truth/
+```
+
+Run:
+
+```bash
+python3 benchmark/run_benchmark.py
+```
+
+Generated results are stored in:
+
+```text
+benchmark_outputs/
+```
+
+The benchmark records:
+
+* Field accuracy
+* Per-RFP accuracy
+* Latency
+* Input tokens
+* Output tokens
+* Total tokens
+* Field-level failures
+
+The field-level report is generated as:
+
+```text
+benchmark_outputs/field_accuracy_report.json
+```
+
+---
+
+## Kubernetes Deployment
+
+The project includes Kubernetes manifests for the model and web application.
+
+### Create namespace
+
+```bash
+kubectl create namespace rfp-ai
+```
+
+### Deploy the model
+
+```bash
+kubectl apply -f lift-k8s.yaml
+```
+
+Verify:
+
+```bash
+kubectl get pods -n rfp-ai
+kubectl get svc -n rfp-ai
+```
+
+The model service exposes port:
+
+```text
+8000
+```
+
+### Deploy the web application
+
+```bash
+kubectl apply -f rfp-web-k8s.yaml
+```
+
+Verify:
+
+```bash
+kubectl get pods -n rfp-ai
+kubectl get svc -n rfp-ai
+```
+
+The web application uses:
+
+```text
+8081
+```
+
+The web deployment communicates with the model through the Kubernetes service:
+
+```text
+lift-serving.rfp-ai.svc.cluster.local:8000
+```
+
+---
+
+## Docker Web Application
+
+The web application can be packaged using:
+
+```bash
+docker build -f Dockerfile.web -t rfp-web:0.1 .
+```
+
+The container runs:
+
+```text
+FastAPI + React
+```
+
+on port:
+
+```text
+8081
+```
+
+The container expects:
+
+```text
+MODEL_BASE_URL
+```
+
+to point to the model's OpenAI-compatible `/v1` endpoint.
+
+Example:
+
+```bash
+export MODEL_BASE_URL=http://localhost:8000/v1
+```
+
+---
+
+## Monitoring
+
+The project includes Prometheus and Grafana configuration under:
+
+```text
+monitoring/
+```
+
+Start monitoring services:
+
+```bash
+cd monitoring
+docker compose up -d
+```
+
+Prometheus:
+
+```text
+http://localhost:9090
+```
+
+Grafana:
+
+```text
+http://localhost:3000
+```
+
+The Grafana dashboard monitors infrastructure and vLLM metrics such as:
+
+* GPU utilization
+* GPU memory
+* GPU temperature
+* CPU usage
+* RAM usage
+* Active requests
+* Waiting requests
+* Request completion
+* Generated tokens
+* Prompt tokens
+* Token throughput
+* Request completion rate
+* Cache activity
+* Preemptions
+
+Dashboard configuration:
+
+```text
+monitoring/dashboard.json
+```
+
+Prometheus configuration:
+
+```text
+monitoring/prometheus.yml
+```
+
+---
+
+## Environment Variables
+
+Create a local `.env` file when environment-specific configuration is required.
+
+Do not commit secrets to Git.
+
+Example:
+
+```env
+MODEL_BASE_URL=http://localhost:8000/v1
+```
+
+The repository already ignores `.env` files through `.gitignore`.
+
+---
+
+## Development Notes
+
+The project uses a locally hosted model rather than relying on an external model API for the primary extraction pipeline.
+
+The model endpoint follows the OpenAI-compatible vLLM API format.
+
+The frontend communicates with the FastAPI backend, while the backend handles:
+
+1. PDF upload
+2. PDF text extraction for security inspection
+3. Prompt-injection detection
+4. NeMo Guardrails validation
+5. Vision-model inference
+6. Structured JSON validation
+7. Post-inference security checks
+8. Response generation
+
+---
+
+## Current Architecture
+
+```text
+                    ┌─────────────────────┐
+                    │     React / Vite    │
+                    │     Frontend        │
+                    └──────────┬──────────┘
+                               │
+                               │ HTTP
+                               ▼
+                    ┌─────────────────────┐
+                    │      FastAPI        │
+                    │   RFP API :8081     │
+                    └──────────┬──────────┘
+                               │
+                    ┌──────────┴──────────┐
+                    │                     │
+                    ▼                     ▼
+          ┌─────────────────┐   ┌──────────────────┐
+          │ Security Layer  │   │ PDF Processing   │
+          │ Regex + NeMo    │   │ PyMuPDF / pypdf  │
+          └────────┬────────┘   └────────┬─────────┘
+                   │                     │
+                   └──────────┬──────────┘
+                              ▼
+                    ┌─────────────────────┐
+                    │    Lift / vLLM      │
+                    │      :8000           │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                       Structured JSON
+```
+
+---
+
+## Team Project
+
+**Project:** RFP AI
+
+**Repository:** `team6-AI_Runners-RFP_AI`
+
+The project was developed as part of an AI infrastructure / AI engineering project focusing on model serving, RFP document extraction, security, benchmarking, and observability.
+
+---
+
+## License
+
+Add the appropriate project or organizational license here if required.
